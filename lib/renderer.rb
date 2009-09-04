@@ -96,7 +96,7 @@ class Renderer
   end
 
   def render_button_label(button)
-    x, y = case button['name'].to_sym
+    x, y = case button['position'].to_sym
     when :top_left
       [ 1, BUTTON_FONT.height ]
     when :bottom_left

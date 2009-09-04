@@ -21,22 +21,22 @@ class RendererTest < Test::Unit::TestCase
   end
 
   def test_render_top_left_button_label
-    @renderer.render '<button name="top_left">top left</button>'
+    @renderer.render '<button position="top_left">top left</button>'
     assert images_are_identical?(:render_top_left_button_label, @image_filepath)
   end
 
   def test_render_top_right_button_label
-    @renderer.render '<button name="top_right">top right</button>'
+    @renderer.render '<button position="top_right">top right</button>'
     assert images_are_identical?(:render_top_right_button_label, @image_filepath)
   end
 
   def test_render_bottom_left_button_label
-    @renderer.render '<button name="bottom_left">bottom left</button>'
+    @renderer.render '<button position="bottom_left">bottom left</button>'
     assert images_are_identical?(:render_bottom_left_button_label, @image_filepath)
   end
 
   def test_render_bottom_right_button_label
-    @renderer.render '<button name="bottom_right">bottom right</button>'
+    @renderer.render '<button position="bottom_right">bottom right</button>'
     assert images_are_identical?(:render_bottom_right_button_label, @image_filepath)
   end
 
