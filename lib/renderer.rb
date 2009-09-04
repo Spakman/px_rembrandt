@@ -11,6 +11,7 @@ class Renderer
   Small = Font.new "#{File.dirname(__FILE__)}/../fonts/profont.ttf", 7.0, 6, 8, 2
   BUTTON_FONT = Small
   LIST_FONT = Small
+  TITLE_FONT = Small
 
   def initialize(filepath)
     @filepath = filepath
@@ -28,6 +29,9 @@ class Renderer
     view = Nokogiri::HTML.parse text
     view.css('button').each do |button|
       render_button_label button
+    end
+    view.css('title').each do |title|
+      render_title title
     end
     view.css('list').each do |list|
       render_list list
@@ -82,14 +86,14 @@ class Renderer
   end
 
   def render_list_items(items, selected_index)
-    x, y = LIST_FONT.width * 2, BUTTON_FONT.height * 3
+    x, y = LIST_FONT.width * 2, BUTTON_FONT.height * 2
 
     items.each do |item|
       if item['selected']
-        @image.filledRectangle(x, y - LIST_FONT.height, SCREEN_WIDTH - (LIST_FONT.width * 2), y, @black)
-        render_string item.content, x, y, LIST_FONT, @white
+        @image.filledRectangle(x, y, SCREEN_WIDTH - (LIST_FONT.width * 2), y + LIST_FONT.height, @black)
+        render_string item.content, :x => x, :y => y, :font => LIST_FONT, :colour => @white
       else
-        render_string item.content, x, y, LIST_FONT
+        render_string item.content, :x => x, :y => y, :font => LIST_FONT
       end
       y += LIST_FONT.height
     end
@@ -98,18 +102,40 @@ class Renderer
   def render_button_label(button)
     x, y = case button['position'].to_sym
     when :top_left
-      [ 1, BUTTON_FONT.height ]
+      render_string button.content
     when :bottom_left
-      [ 1, SCREEN_HEIGHT - BUTTON_FONT.descender_height ]
+      render_string button.content, :valign => :bottom
     when :top_right
-      [ SCREEN_WIDTH - (button.content.length * BUTTON_FONT.width), BUTTON_FONT.height ]
+      render_string button.content, :halign => :right
     when :bottom_right
-      [ SCREEN_WIDTH - (button.content.length * BUTTON_FONT.width), SCREEN_HEIGHT - BUTTON_FONT.descender_height ]
+      render_string button.content, :valign => :bottom, :halign => :right
     end
-    render_string button.content, x, y, BUTTON_FONT
   end
 
-  def render_string(text, x, y, font, colour = @black)
-    @image.stringTTF(colour, font.path, font.size, 0, x, y, text)
+  def render_title(title)
+    render_string title.content, :font => TITLE_FONT, :halign => :centre, :y => BUTTON_FONT.height
+  end
+
+  # TODO: add :width and :height options to specify the bounding box size.
+  def render_string(text, options = {})
+    default_options = { :x => 0, :y => 0, :colour => @black, :font => Small, :valign => :left, :halign => :top }
+    options = default_options.merge options
+
+    if options[:valign] == :centre
+      pixels_high = text.split("\n").length * options[:font].height
+      options[:y] = (SCREEN_HEIGHT - pixels_high) / 2
+    elsif options [:valign] == :bottom
+      options[:y] = SCREEN_HEIGHT - (text.split("\n").length * options[:font].height) - options[:font].descender_height
+    end
+    options[:y] += options[:font].height
+
+    if options[:halign] == :centre
+      pixels_wide = options[:font].width * text.length
+      options[:x] = (SCREEN_WIDTH - pixels_wide) / 2
+    elsif options [:halign] == :right
+      options[:x] = SCREEN_WIDTH - (text.length * options[:font].width)
+    end
+
+    @image.stringTTF(options[:colour], options[:font].path, options[:font].size, 0, options[:x], options[:y], text)
   end
 end
