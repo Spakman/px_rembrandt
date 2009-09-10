@@ -2,7 +2,7 @@ require 'test/unit'
 require 'fileutils'
 require "#{File.dirname(__FILE__)}/../lib/renderer"
 
-class Renderer
+class Rembrandt::Renderer
   def render_string_testing(*args)
     setup_image
     render_string args.first, args[1] || {}
@@ -15,8 +15,8 @@ class RendererTest < Test::Unit::TestCase
 
   def images_are_identical?(target, value_filepath)
     target_filepath = "#{File.dirname(__FILE__)}/images_for_assertions/#{target}.png"
-    target = GD::Image.newFromPng(File.open(target_filepath, "r"))
-    value = GD::Image.newFromPng(File.open(value_filepath, "r"))
+    target = GD::Image.new_from_png(target_filepath)
+    value = GD::Image.new_from_png(value_filepath)
     return_value = target.pngStr == value.pngStr
     target.destroy
     value.destroy
@@ -26,7 +26,7 @@ class RendererTest < Test::Unit::TestCase
   def setup
     @image_filepath = "/tmp/renderer_test_image.png"
     FileUtils.rm_f @image_filepath
-    @renderer = Renderer.new @image_filepath
+    @renderer = Rembrandt::Renderer.new @image_filepath
   end
 
   def test_render_top_left_button_label
