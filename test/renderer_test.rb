@@ -50,7 +50,7 @@ class RendererTest < Test::Unit::TestCase
   end
 
   def test_render_list_with_four_items_first_selected
-    @renderer.render '<list><item selected="true">Item 1</item>
+    @renderer.render '<list><item selected="yes">Item 1</item>
                             <item>Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item></list>'
@@ -59,7 +59,7 @@ class RendererTest < Test::Unit::TestCase
    
   def test_render_list_with_four_items_second_selected
     @renderer.render '<list><item>Item 1</item>
-                            <item selected="true">Item 2</item>
+                            <item selected="yes">Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item></list>'
     assert images_are_identical?(:render_list_with_four_items_second_selected, @image_filepath)
@@ -68,7 +68,7 @@ class RendererTest < Test::Unit::TestCase
   def test_render_list_with_four_items_third_selected
     @renderer.render '<list><item>Item 1</item>
                             <item>Item 2</item>
-                            <item selected="true">Item 3</item>
+                            <item selected="yes">Item 3</item>
                             <item>Item 4</item></list>'
     assert images_are_identical?(:render_list_with_four_items_third_selected, @image_filepath)
   end
@@ -77,12 +77,12 @@ class RendererTest < Test::Unit::TestCase
     @renderer.render '<list><item>Item 1</item>
                             <item>Item 2</item>
                             <item>Item 3</item>
-                            <item selected="true">Item 4</item></list>'
+                            <item selected="yes">Item 4</item></list>'
     assert images_are_identical?(:render_list_with_four_items_fourth_selected, @image_filepath)
   end
   
   def test_render_list_with_three_items_first_selected
-    @renderer.render '<list><item selected="true">Item 1</item>
+    @renderer.render '<list><item selected="yes">Item 1</item>
                             <item>Item 2</item>
                             <item>Item 3</item></list>'
     assert images_are_identical?(:render_list_with_three_items_first_selected, @image_filepath)
@@ -90,7 +90,7 @@ class RendererTest < Test::Unit::TestCase
 
   def test_render_list_with_three_items_second_selected
     @renderer.render '<list><item>Item 1</item>
-                            <item selected="true">Item 2</item>
+                            <item selected="yes">Item 2</item>
                             <item>Item 3</item></list>'
     assert images_are_identical?(:render_list_with_three_items_second_selected, @image_filepath)
   end
@@ -98,12 +98,12 @@ class RendererTest < Test::Unit::TestCase
   def test_render_list_with_three_items_third_selected
     @renderer.render '<list><item>Item 1</item>
                             <item>Item 2</item>
-                            <item selected="true">Item 3</item></list>'
+                            <item selected="yes">Item 3</item></list>'
     assert images_are_identical?(:render_list_with_three_items_third_selected, @image_filepath)
   end
 
   def test_render_list_with_five_items_first_selected
-    @renderer.render '<list><item selected="true">Item 1</item>
+    @renderer.render '<list><item selected="yes">Item 1</item>
                             <item>Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item>
@@ -113,7 +113,7 @@ class RendererTest < Test::Unit::TestCase
   
   def test_render_list_with_five_items_second_selected
     @renderer.render '<list><item>Item 1</item>
-                            <item selected="true">Item 2</item>
+                            <item selected="yes">Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item>
                             <item>Item 5</item></list>'
@@ -123,7 +123,7 @@ class RendererTest < Test::Unit::TestCase
   def test_render_list_with_five_items_third_selected
     @renderer.render '<list><item>Item 1</item>
                             <item>Item 2</item>
-                            <item selected="true">Item 3</item>
+                            <item selected="yes">Item 3</item>
                             <item>Item 4</item>
                             <item>Item 5</item></list>'
     assert images_are_identical?(:render_list_with_five_items_third_selected, @image_filepath)
@@ -134,7 +134,7 @@ class RendererTest < Test::Unit::TestCase
                             <item>Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item>
-                            <item selected="true">Item 5</item></list>'
+                            <item selected="yes">Item 5</item></list>'
     assert images_are_identical?(:render_list_with_five_items_fifth_selected, @image_filepath)
   end
 
@@ -170,9 +170,24 @@ class RendererTest < Test::Unit::TestCase
     @renderer.render_string_testing 'Centre aligned string', :valign => :centre
     assert images_are_identical?(:render_string_vertical_centre_0_0, @image_filepath)
   end
-
+  
   def test_render_title
     @renderer.render '<title>This is a page title</title>'
     assert images_are_identical?(:render_title, @image_filepath)
+  end
+
+  def test_render_text_fixed_width_without_wrapping
+    @renderer.render '<text x="0" y="0" width="90" wrap="no">I\'m writing this code in the Alps!</text>'
+    assert images_are_identical?(:render_string_fixed_width_without_wrapping, @image_filepath)
+  end
+  
+  def test_render_text_fixed_width_and_wrapping
+    @renderer.render '<text x="0" y="0" width="90" wrap="yes">I\'m writing this code in the Alps!</text>'
+    assert images_are_identical?(:render_string_fixed_width_with_wrapping, @image_filepath)
+  end
+
+  def test_render_text_fixed_height_width_with_wrapping
+    @renderer.render '<text x="0" y="0" width="90" height="20" wrap="yes">I\'m writing this code in the Alps!</text>'
+    assert images_are_identical?(:render_string_fixed_height_width_with_wrapping, @image_filepath)
   end
 end

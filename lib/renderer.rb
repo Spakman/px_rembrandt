@@ -1,17 +1,16 @@
 require 'rubygems'
 require 'GD'
 require 'nokogiri'
+require "#{File.dirname(__FILE__)}/fonts"
+require "#{File.dirname(__FILE__)}/string_formatter"
 
 class Renderer
   SCREEN_WIDTH = 256
   SCREEN_HEIGHT = 64
   CONTENT_HEIGHT = 32
 
-  Font = Struct.new :path, :size, :width, :height, :descender_height
-  Small = Font.new "#{File.dirname(__FILE__)}/../fonts/profont.ttf", 7.0, 6, 8, 2
-  BUTTON_FONT = Small
-  LIST_FONT = Small
-  TITLE_FONT = Small
+  include Rembrandt::Fonts
+  include Rembrandt::StringFormatter
 
   def initialize(filepath)
     @filepath = filepath
@@ -25,8 +24,8 @@ class Renderer
     @black = @image.colorAllocate(0, 0, 0)
   end
 
-  def parse_and_render(text)
-    view = Nokogiri::HTML.parse text
+  def parse_and_render(string)
+    view = Nokogiri::HTML.parse string
     view.css('button').each do |button|
       render_button_label button
     end
@@ -35,6 +34,9 @@ class Renderer
     end
     view.css('list').each do |list|
       render_list list
+    end
+    view.css('text').each do |text|
+      render_text text
     end
   end
 
@@ -64,14 +66,14 @@ class Renderer
   end
 
   def build_and_render_short_list(list)
-    selected_item = list.xpath('//item[@selected="true"]').first
+    selected_item = list.xpath('//item[@selected="yes"]').first
     selected_index = list.children.index selected_item
     
     render_list_items list.children, selected_index
   end
 
   def build_and_render_long_list(list)
-    selected_item = list.xpath('//item[@selected="true"]').first
+    selected_item = list.xpath('//item[@selected="yes"]').first
     selected_index = list.children.index selected_item
 
     items_to_display = []
@@ -116,24 +118,39 @@ class Renderer
     render_string title.content, :font => TITLE_FONT, :halign => :centre, :y => BUTTON_FONT.height
   end
 
-  # TODO: add :width and :height options to specify the bounding box size.
+  def render_text(text)
+    x = text['x'].to_i || TEXT_FONT.width
+    y = text['y'].to_i || TEXT_FONT.height
+    wrap = text['wrap'] || 'no'
+    render_string text.content, :font => TEXT_FONT, :y => y, x => x, :wrap => wrap, :width => text['width'], :height => text['height']
+  end
+
+  # TODO: Move the alignment stuff to StringFormatter and fix it for multi-line stuff.
   def render_string(text, options = {})
-    default_options = { :x => 0, :y => 0, :colour => @black, :font => Small, :valign => :left, :halign => :top }
+    default_options = { :x => 0, :y => 0, :colour => @black, :font => Small, :valign => :left, :halign => :top, :wrap => 'no', :width => SCREEN_WIDTH, :height => SCREEN_HEIGHT }
     options = default_options.merge options
 
+    if options[:wrap] == 'yes'
+      text = wrap_string text, options[:width], options[:font]
+    else
+      text = truncate_string text, options[:width], options[:font]
+    end
+
+    text = cut_lines text, options[:height], options[:font]
+
     if options[:valign] == :centre
-      pixels_high = text.split("\n").length * options[:font].height
-      options[:y] = (SCREEN_HEIGHT - pixels_high) / 2
+      pixels_high = text.lines.count * options[:font].height
+      options[:y] = (options[:height] - pixels_high) / 2
     elsif options [:valign] == :bottom
-      options[:y] = SCREEN_HEIGHT - (text.split("\n").length * options[:font].height) - options[:font].descender_height
+      options[:y] = options[:height] - (text.lines.count * options[:font].height) - options[:font].descender_height
     end
     options[:y] += options[:font].height
 
     if options[:halign] == :centre
       pixels_wide = options[:font].width * text.length
-      options[:x] = (SCREEN_WIDTH - pixels_wide) / 2
+      options[:x] = (options[:width] - pixels_wide) / 2
     elsif options [:halign] == :right
-      options[:x] = SCREEN_WIDTH - (text.length * options[:font].width)
+      options[:x] = options[:width] - (text.length * options[:font].width)
     end
 
     @image.stringTTF(options[:colour], options[:font].path, options[:font].size, 0, options[:x], options[:y], text)
