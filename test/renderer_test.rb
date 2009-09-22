@@ -186,6 +186,11 @@ class RendererTest < Test::Unit::TestCase
     assert images_are_identical?(:render_string_fixed_width_with_wrapping, @image_filepath)
   end
 
+  def test_render_text_with_no_parameters
+    @renderer.render '<text>This is a long line that should start at zero, zero and be truncated instead of wrapped.</text>'
+    assert images_are_identical?(:render_text_with_no_parameters, @image_filepath)
+  end
+
   def test_render_text_fixed_height_width_with_wrapping
     @renderer.render '<text x="0" y="0" width="90" height="20" wrap="yes">I\'m writing this code in the Alps!</text>'
     assert images_are_identical?(:render_string_fixed_height_width_with_wrapping, @image_filepath)

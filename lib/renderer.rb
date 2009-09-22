@@ -143,11 +143,12 @@ module Rembrandt
       x = text['x'].to_i || TEXT_FONT.width
       y = text['y'].to_i || TEXT_FONT.height
       wrap = text['wrap'] || 'no'
-      render_string text.content, :font => TEXT_FONT, :y => y, x => x, :wrap => wrap, :width => text['width'], :height => text['height']
+      render_string text.content, :font => TEXT_FONT, :y => y, :x => x, :wrap => wrap, :width => text['width'], :height => text['height']
     end
 
     # TODO: Move the alignment stuff to StringFormatter and fix it for multi-line stuff.
     def render_string(text, options = {})
+      options.delete_if { |key, value| value.nil? }
       default_options = { :x => 0, :y => 0, :colour => @black, :font => Small, :valign => :left, :halign => :top, :wrap => 'no', :width => SCREEN_WIDTH, :height => SCREEN_HEIGHT }
       options = default_options.merge options
 
