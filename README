@@ -1,0 +1,6 @@
+Requirements
+===
+
+* Ruby 1.9
+* Ruby/GD that runs on Ruby 1.9 - our branch does: ruby-gd.git
+* Nokogiri

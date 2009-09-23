@@ -1,0 +1,5 @@
+#!/usr/bin/ruby19
+
+require "#{File.dirname(__FILE__)}/../lib/unix_socket_listener"
+listener = Rembrandt::UnixSocketListener.new "/tmp/rembrandt.socket", "/dev/shm/lcd.png"
+listener.listen_and_process
