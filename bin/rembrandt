@@ -1,5 +1,25 @@
 #!/usr/bin/ruby19
-
+require 'optparse'
 require "#{File.dirname(__FILE__)}/../lib/unix_socket_listener"
-listener = Rembrandt::UnixSocketListener.new "/tmp/rembrandt.socket", "/dev/shm/lcd.png"
+
+options = { socket: "/tmp/rembrandt.socket", output: "/dev/shm/lcd.png" }
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: rembrandt [options]"
+
+  opts.on("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on("-s", "--socket [SOCKETFILE]", "Connect to this UNIX socket") do |socket|
+    options[:socket] = socket
+  end
+
+  opts.on("-o", "--output [FILEPATH]", "The filepath for the outputted PNG") do |filepath|
+    options[:output] = filepath
+  end
+end.parse!
+
+listener = Rembrandt::UnixSocketListener.new options[:socket], options[:output]
 listener.listen_and_process
