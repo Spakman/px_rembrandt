@@ -1,8 +1,8 @@
-#!/usr/bin/ruby19
+#!/opt/bin/ruby
 require 'optparse'
-require "#{File.dirname(__FILE__)}/../lib/unix_socket_listener"
+require "#{File.dirname(__FILE__)}/../lib/named_pipe_listener"
 
-options = { socket: "/tmp/rembrandt.socket", output: "/dev/shm/lcd.png" }
+options = { pipe: "/tmp/rembrandt.fifo", output: "/dev/shm/lcd.png" }
 
 OptionParser.new do |opts|
   opts.banner = "Usage: rembrandt [options]"
@@ -12,8 +12,8 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("-s", "--socket [SOCKETFILE]", "Connect to this UNIX socket") do |socket|
-    options[:socket] = socket
+  opts.on("-p", "--pipe [FILEPATH]", "Connect to this named pipe") do |pipe|
+    options[:pipe] = pipe
   end
 
   opts.on("-o", "--output [FILEPATH]", "The filepath for the outputted PNG") do |filepath|
@@ -21,5 +21,5 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-listener = Rembrandt::UnixSocketListener.new options[:socket], options[:output]
+listener = Rembrandt::NamedPipeListener.new options[:pipe], options[:output]
 listener.listen_and_process
