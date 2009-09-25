@@ -20,6 +20,9 @@ class RendererTest < Test::Unit::TestCase
     return_value = target.pngStr == value.pngStr
     target.destroy
     value.destroy
+    unless return_value
+      FileUtils.cp @image_filepath, target_filepath if ENV['IMAGES_HAVE_CHANGED']
+    end
     return_value
   end
 
