@@ -23,6 +23,9 @@ module Rembrandt
       @image = GD::Image.new(256, 64)
       @white = @image.colorAllocate(255, 255, 255)
       @black = @image.colorAllocate(0, 0, 0)
+      @trans = @image.colorAllocate(1, 1, 1)
+      @image = @image.fill(0, 0, @trans)
+      @image = @image.transparent(@trans)
     end
 
     def parse_and_render(string)
