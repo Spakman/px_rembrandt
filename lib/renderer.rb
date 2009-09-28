@@ -139,6 +139,20 @@ module Rembrandt
       render_string title.content, :font => TITLE_FONT, :halign => :centre, :y => BUTTON_FONT.height
     end
 
+    # Renders a <text> element. The origin is top-left.
+    #
+    # Parameters:
+    #   x (integer)         : starting x coordinate of the text container in pixels. Default: 0.
+    #   y (integer)         : starting y coordinate of the text container in pixels. Default: 0.
+    #   width (integer)     : width of the container in pixels. Default: SCREEN_WIDTH
+    #   height (integer)    : height of the container in pixels. Default: SCREEN_HEIGHT
+    #   wrap ("yes"|"no")   : wrap lines that are too long for the screen. Default: "no".
+    #   halign              : horizontal alignment within the defined container. Default "left".
+    #     ("left"|"centre"|
+    #     "right")
+    #   valign              : vertical alignment within the defined container. Default "top".
+    #     ("top"|"centre"|
+    #     "bottom")
     def render_text(text)
       x = text['x'].to_i || TEXT_FONT.width
       y = text['y'].to_i || TEXT_FONT.height

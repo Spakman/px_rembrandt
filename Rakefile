@@ -6,3 +6,9 @@ task :test do
     require file
   end
 end
+
+desc "Generate the RDoc HTML documentation"
+task :doc do
+  FileUtils.rm_rf "#{File.dirname(__FILE__)}/doc/"
+  system 'rdoc . --exclude="test/*.rb" --exclude="Rakefile" -N -v'
+end
