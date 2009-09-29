@@ -21,5 +21,5 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-listener = Rembrandt::NamedPipeListener.new options[:pipe], options[:output]
+listener = Rembrandt::NamedPipeListener.new options[:pipe], Rembrandt::Renderer.new(options[:output])
 listener.listen_and_process

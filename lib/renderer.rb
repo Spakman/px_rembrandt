@@ -28,19 +28,6 @@ module Rembrandt
       @image = @image.transparent(@trans)
     end
 
-    def parse_and_render(string)
-      view = Nokogiri::HTML.parse string
-      view.css('button').each do |button|
-        render_button_label button
-      end
-      view.css('title').each do |title|
-        render_title title
-      end
-      view.css('text').each do |text|
-        render_text text
-      end
-    end
-
     def parse_and_render(text)
       view = Nokogiri::HTML.parse text
       view.css('button').each do |button|
