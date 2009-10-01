@@ -24,8 +24,8 @@ module Rembrandt
       @white = @image.colorAllocate(255, 255, 255)
       @black = @image.colorAllocate(0, 0, 0)
       @trans = @image.colorAllocate(1, 1, 1)
-      @image = @image.fill(0, 0, @trans)
-      @image = @image.transparent(@trans)
+      @plcd = @image.colorAllocate(120, 190, 250)
+      @image = @image.fill(0, 0, @plcd)
     end
 
     def parse_and_render(text)
