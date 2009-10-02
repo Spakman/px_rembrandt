@@ -20,7 +20,7 @@ module Rembrandt
     # header and the markup to render. The message header is of the form
     # (terminated by a newline character):
     #
-    # <request X>
+    # <render X>
     #
     # where X is the number of bytes in the request that follows.
     #
@@ -30,7 +30,7 @@ module Rembrandt
     def listen_and_process
       loop do
         header = @pipe.gets
-        if header =~ /^<request (\d{1,4})>\n$/
+        if header =~ /^<render (\d{1,4})>\n$/
           request = @pipe.read $1.to_i
           @renderer.render(request)
         end

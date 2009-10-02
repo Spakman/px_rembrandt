@@ -34,7 +34,7 @@ class NamedPipeListenerTest < Test::Unit::TestCase
   end
 
   def write_request_to_pipe(string)
-    @pipe << "<request #{string.length}>\n"
+    @pipe << "<render #{string.length}>\n"
     @pipe << string
     @pipe.flush
     sleep 1
