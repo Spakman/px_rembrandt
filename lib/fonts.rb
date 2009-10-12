@@ -1,3 +1,7 @@
+# Copyright (C) 2009 Mark Somerville <mark@scottishclimbs.com>
+# Released under the General Public License (GPL) version 3.
+# See COPYING
+
 module Rembrandt
   module Fonts
     Font = Struct.new :path, :size, :width, :height, :descender_height
