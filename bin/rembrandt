@@ -5,7 +5,7 @@
 # See COPYING
 
 require 'optparse'
-require "#{File.dirname(__FILE__)}/../lib/named_pipe_listener"
+require_relative "../lib/named_pipe_listener"
 
 options = { pipe: "/tmp/rembrandt.fifo", output: "/dev/shm/lcd.png" }
 

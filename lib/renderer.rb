@@ -5,8 +5,8 @@
 require 'rubygems'
 require 'GD'
 require 'nokogiri'
-require "#{File.dirname(__FILE__)}/fonts"
-require "#{File.dirname(__FILE__)}/string_formatter"
+require_relative "fonts"
+require_relative "string_formatter"
 
 module Rembrandt
   class Renderer

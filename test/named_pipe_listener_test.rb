@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'fileutils'
 
-require "#{File.dirname(__FILE__)}/../lib/named_pipe_listener"
+require_relative "../lib/named_pipe_listener"
 
 class TestRenderer
   attr_reader :requests

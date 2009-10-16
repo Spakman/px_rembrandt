@@ -1,7 +1,7 @@
 require 'test/unit'
 require 'fileutils'
-require "#{File.dirname(__FILE__)}/../lib/string_formatter"
-require "#{File.dirname(__FILE__)}/../lib/fonts"
+require_relative "../lib/string_formatter"
+require_relative "../lib/fonts"
 
 class Formatter
   include Rembrandt::StringFormatter

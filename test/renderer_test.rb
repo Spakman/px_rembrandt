@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'fileutils'
-require "#{File.dirname(__FILE__)}/../lib/renderer"
+require_relative "../lib/renderer"
 
 class Rembrandt::Renderer
   def render_string_testing(*args)

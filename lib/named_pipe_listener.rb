@@ -2,9 +2,8 @@
 # Released under the General Public License (GPL) version 3.
 # See COPYING
 
-require "#{File.dirname(__FILE__)}/renderer"
+require_relative "renderer"
 require 'fileutils'
-
 
 module Rembrandt
   class NamedPipeListener
