@@ -4,10 +4,13 @@
 # Released under the General Public License (GPL) version 3.
 # See COPYING
 
+$0 = "rembrandt"
+$LOAD_PATH.unshift "#{ENV["PROJECT_X_BASE"]}/lib/"
+
 require 'optparse'
 require_relative "../lib/named_pipe_listener"
 
-options = { pipe: "/tmp/rembrandt.fifo", output: "/dev/shm/lcd.png" }
+options = { pipe: "/tmp/rembrandt.fifo", output: "/dev/shm/lcd.png", daemonize: false }
 
 OptionParser.new do |opts|
   opts.banner = "Usage: rembrandt [options]"
@@ -24,7 +27,14 @@ OptionParser.new do |opts|
   opts.on("-o", "--output [FILEPATH]", "The filepath for the outputted PNG") do |filepath|
     options[:output] = filepath
   end
+
+  # The American spelling of this word feels better than the British one!
+  opts.on("-d", "--daemonize", "Runs Rembrandt in the background") do |daemonize|
+    options[:daemonize] = daemonize
+  end
 end.parse!
 
+Process.daemon if options[:daemonize]
+
 listener = Rembrandt::NamedPipeListener.new options[:pipe], Rembrandt::Renderer.new(options[:output])
-listener.listen_and_process
+  listener.listen_and_process
