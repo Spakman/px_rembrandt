@@ -10,12 +10,12 @@ require_relative "string_formatter"
 
 module Rembrandt
   class Renderer
-    SCREEN_WIDTH = 256
-    SCREEN_HEIGHT = 64
-    CONTENT_HEIGHT = 32
-
     include Rembrandt::Fonts
     include Rembrandt::StringFormatter
+
+    SCREEN_WIDTH = 256
+    SCREEN_HEIGHT = 64
+    NUMBER_OF_LIST_ITEMS_TO_DISPLAY = 5
 
     def initialize(filepath)
       @filepath = filepath
@@ -65,41 +65,10 @@ module Rembrandt
     end
 
     def render_list(list)
-      num_children = list.children.length
-      if num_children <= (CONTENT_HEIGHT / LIST_FONT.height)
-        build_and_render_short_list list
-      else
-        build_and_render_long_list list
-      end
-    end
-
-    def build_and_render_short_list(list)
       selected_item = list.xpath('//item[@selected="yes"]').first
       selected_index = list.children.index selected_item
 
       render_list_items list.children, selected_index
-    end
-
-    def build_and_render_short_list(list)
-      selected_item = list.xpath('//item[@selected="true"]').first
-      selected_index = list.children.index selected_item
-
-      render_list_items list.children, selected_index
-    end
-
-    def build_and_render_long_list(list)
-      selected_item = list.xpath('//item[@selected="yes"]').first
-      selected_index = list.children.index selected_item
-
-      items_to_display = []
-      (CONTENT_HEIGHT / LIST_FONT.height).times do |count|
-        index = selected_index + count - 1
-        if index >= list.children.length
-          index -= list.children.length
-        end
-        items_to_display << list.children[index]
-      end
-      render_list_items items_to_display, selected_index
     end
 
     def render_list_items(items, selected_index)

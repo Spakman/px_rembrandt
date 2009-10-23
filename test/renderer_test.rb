@@ -110,7 +110,7 @@ class RendererTest < Test::Unit::TestCase
                             <item>Item 2</item>
                             <item>Item 3</item>
                             <item>Item 4</item>
-                            <item>Item 5</item></list>'
+                            <item>Item 5</item>'
     assert images_are_identical?(:render_list_with_five_items_first_selected, @image_filepath)
   end
   
