@@ -198,4 +198,11 @@ class RendererTest < Test::Unit::TestCase
     @renderer.render '<text x="0" y="0" width="90" height="20" wrap="yes">I\'m writing this code in the Alps!</text>'
     assert images_are_identical?(:render_string_fixed_height_width_with_wrapping, @image_filepath)
   end
+
+  def test_render_huge_font
+    @renderer.render '<text x="0" y="0" size="huge">This is big</text>'
+    assert images_are_identical?(:render_huge_font, @image_filepath)
+    @renderer.render '<text x="0" y="0" size="huge" valign="centre" halign="centre">This is big</text>'
+    assert images_are_identical?(:render_huge_font_vert_horiz_centre, @image_filepath)
+  end
 end

@@ -29,7 +29,7 @@ module Rembrandt
       @black = @image.colorAllocate(0, 0, 0)
       @trans = @image.colorAllocate(1, 1, 1)
       @plcd = @image.colorAllocate(120, 190, 250)
-      @image = @image.fill(0, 0, @plcd)
+      @image = @image.fill(0, 0, @white)
     end
 
     def parse_and_render(text)
@@ -117,10 +117,27 @@ module Rembrandt
     #     ("top"|"centre"|
     #     "bottom")
     def render_text(text)
-      x = text['x'].to_i || TEXT_FONT.width
-      y = text['y'].to_i || TEXT_FONT.height
+      if text['size']
+        font = eval(text['size'].capitalize)
+      else
+        font = TEXT_FONT
+      end
+      if text['width']
+        width = text['width'].to_i
+      end
+      if text['height']
+        height = text['height'].to_i
+      end
+      if text['halign']
+        halign = text['halign'].to_sym
+      end
+      if text['valign']
+        valign = text['valign'].to_sym
+      end
+      x = text['x'].to_i || font.width
+      y = text['y'].to_i || font.height
       wrap = text['wrap'] || 'no'
-      render_string text.content, :font => TEXT_FONT, :y => y, :x => x, :wrap => wrap, :width => text['width'], :height => text['height']
+      render_string text.content, :font => font, :y => y, :x => x, :wrap => wrap, :width => width, :height => height, :halign => halign, :valign => valign
     end
 
     # TODO: Move the alignment stuff to StringFormatter and fix it for multi-line stuff.
