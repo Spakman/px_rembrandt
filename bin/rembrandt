@@ -36,4 +36,4 @@ end.parse!
 Process.daemon if options[:daemonize]
 
 listener = Rembrandt::NamedPipeListener.new options[:pipe], Rembrandt::Renderer.new(options[:output])
-  listener.listen_and_process
+listener.listen_and_process

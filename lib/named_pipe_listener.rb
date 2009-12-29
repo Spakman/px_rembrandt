@@ -3,7 +3,7 @@
 # See COPYING
 
 require_relative "renderer"
-require 'fileutils'
+require "fileutils"
 
 module Rembrandt
   class NamedPipeListener

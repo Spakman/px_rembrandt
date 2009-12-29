@@ -80,7 +80,9 @@ module Rembrandt
     end
 
     def render_list_items(items, selected_index)
-      x, y = LIST_FONT.width * 2, BUTTON_FONT.height * 2
+      # Subtract 2 from the calculated Y since our font is slightly too tall to
+      # fit eight lines on the screen.
+      x, y = LIST_FONT.width * 2, (BUTTON_FONT.height * 2) - 2
 
       items.each do |item|
         if item['selected']
@@ -94,20 +96,24 @@ module Rembrandt
     end
 
     def render_button_label(button)
-      x, y = case button['position'].to_sym
-             when :top_left
-               render_string button.content
-             when :bottom_left
-               render_string button.content, :valign => :bottom
-             when :top_right
-               render_string button.content, :halign => :right
-             when :bottom_right
-               render_string button.content, :valign => :bottom, :halign => :right
-             end
+      case button['position'].to_sym
+      when :top_left
+        render_string button.content, :y => -1
+      when :bottom_left
+        render_string button.content, :valign => :bottom
+      when :top_right
+        render_string button.content, :halign => :right, :y => -1
+      when :bottom_right
+        render_string button.content, :valign => :bottom, :halign => :right
+      end
     end
 
     def render_title(title)
-      render_string title.content, :font => TITLE_FONT, :halign => :centre, :y => BUTTON_FONT.height
+      # Subtract 2 from the calculated Y since our font is slightly too tall to
+      # fit eight lines on the screen. This does mean that long top labels will
+      # overlap the title by two pixels, but this is a rarer case than long
+      # bottom labels overlapping the bottom of lists and the like.
+      render_string title.content, :font => TITLE_FONT, :halign => :centre, :y => BUTTON_FONT.height - 2
     end
 
     # Renders a <text> element. The origin is top-left.
@@ -124,6 +130,8 @@ module Rembrandt
     #   valign              : vertical alignment within the defined container. Default "top".
     #     ("top"|"centre"|
     #     "bottom")
+    #   size                : the text size. Sizes are defined in fonts.rb.
+    #     ("small"|"huge")
     def render_text(text)
       if text['size']
         font = eval(text['size'].capitalize)
