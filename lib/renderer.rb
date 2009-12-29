@@ -10,6 +10,8 @@ require_relative "string_formatter"
 
 module Rembrandt
   class Renderer
+    attr_accessor :queue
+
     include Rembrandt::Fonts
     include Rembrandt::StringFormatter
 
@@ -20,6 +22,12 @@ module Rembrandt
     def initialize(filepath)
       @filepath = filepath
       @temporary_filepath = "#{filepath}.tmp"
+      @queue = Queue.new
+      Thread.new do
+        loop do
+          render @queue.pop
+        end
+      end
     end
 
     def setup_image

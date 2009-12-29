@@ -35,7 +35,11 @@ module Rembrandt
         header = @pipe.gets
         if header =~ /^<render (\d{1,4})>\n$/
           request = @pipe.read $1.to_i
-          @renderer.render(request)
+          # clears the queue, we only need to render the very last frame
+          unless @renderer.queue.empty?
+            @renderer.queue.clear
+          end
+          @renderer.queue << request
         end
       end
     end

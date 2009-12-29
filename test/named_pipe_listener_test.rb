@@ -3,14 +3,12 @@ require 'fileutils'
 
 require_relative "../lib/named_pipe_listener"
 
-class TestRenderer
-  attr_reader :requests
-  def initialize
-    @requests = []
-  end
+Thread.abort_on_exception = true
 
-  def render(request)
-    @requests << request
+class TestRenderer
+  attr_reader :queue
+  def initialize
+    @queue = Queue.new
   end
 end
 
@@ -74,7 +72,8 @@ class NamedPipeListenerTest < Test::Unit::TestCase
     end
     open_pipe
     write_request_to_pipe "Hello"
-    assert_equal "Hello", @renderer.requests.first
+    assert_equal 1, @renderer.queue.size
+    assert_equal "Hello", @renderer.queue.pop
   end
 
   def test_read_multiple_requests_ignoring_junk
@@ -88,6 +87,20 @@ class NamedPipeListenerTest < Test::Unit::TestCase
     write_request_to_pipe "What's in the middle?"
     @pipe << "junk\nmore junk\n\n"
     write_request_to_pipe "Goodbye"
-    assert_equal [ "Hello", "What's in the middle?", "Goodbye" ], @renderer.requests
+    assert_equal 1, @renderer.queue.size
+    assert_equal "Goodbye", @renderer.queue.pop
+  end
+
+  def test_only_display_last_frame_available
+    Thread.new do
+      @listener = Rembrandt::NamedPipeListener.new @pipe_filepath, @renderer
+      @listener.listen_and_process
+    end
+    open_pipe
+    write_request_to_pipe "Hello"
+    write_request_to_pipe "What's in the middle?"
+    write_request_to_pipe "Goodbye"
+    assert_equal 1, @renderer.queue.size
+    assert_equal "Goodbye", @renderer.queue.pop
   end
 end
