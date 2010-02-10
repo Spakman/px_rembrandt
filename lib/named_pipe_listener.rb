@@ -1,9 +1,9 @@
-# Copyright (C) 2009 Mark Somerville <mark@scottishclimbs.com>
+# Copyright (C) 2009-2010 Mark Somerville <mark@scottishclimbs.com>
 # Released under the General Public License (GPL) version 3.
 # See COPYING
 
-require_relative "renderer"
 require "fileutils"
+require_relative "renderer"
 
 module Rembrandt
   class NamedPipeListener
@@ -18,21 +18,12 @@ module Rembrandt
       @renderer = renderer
     end
 
-    # Returns the last request that is available on the pipe. If more than one
-    # request is available all but the last are ignored.
-    def get_request(timeout = nil)
-      return if IO.select([ @pipe ], nil, nil, timeout).nil?
-      header = @pipe.gets
-      if header =~ /^<render (\d{1,4})>\n$/
-        request = @pipe.read $1.to_i
-      end
-      get_request(0.001) || request
-    end
-
-    # Listens for requests on the named pipe and hands them over to the
-    # renderer. Invalid lines are ignored. A request consists of a message
-    # header and the markup to render. The message header is of the form
-    # (terminated by a newline character):
+    # Returns the last request that is available on the pipe. If no requests
+    # are available, this method blocks.
+    #
+    # Invalid lines are ignored. A request consists of a message header and the
+    # markup to render. The message header is of the form (terminated by a
+    # newline character):
     #
     # <render X>
     #
@@ -41,9 +32,22 @@ module Rembrandt
     # TODO: should this be using IO.sysread?
     #
     # http://www.slideshare.net/feyeleanor/the-ruby-guide-to-nix-plumbing-hax0r-r3dux
+    def get_latest_request
+      IO.select([ @pipe ], nil, nil, nil)
+      begin
+        header = @pipe.gets
+        if header =~ /^<render (\d{1,4})>\n$/
+          request = @pipe.read $1.to_i
+        end
+      end while IO.select([ @pipe ], nil, nil, 0.0001)
+      request
+    end
+
+    # Listens for requests on the named pipe and hands them over to the
+    # renderer.
     def listen_and_process
       loop do
-        request = get_request
+        request = get_latest_request
         @renderer.render(request) unless request.nil?
       end
     end
