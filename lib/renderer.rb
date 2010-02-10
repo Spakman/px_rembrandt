@@ -22,12 +22,6 @@ module Rembrandt
     def initialize(filepath)
       @filepath = filepath
       @temporary_filepath = "#{filepath}.tmp"
-      @queue = Queue.new
-      Thread.new do
-        loop do
-          render @queue.pop
-        end
-      end
     end
 
     def setup_image

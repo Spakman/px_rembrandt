@@ -18,6 +18,17 @@ module Rembrandt
       @renderer = renderer
     end
 
+    # Returns the last request that is available on the pipe. If more than one
+    # request is available all but the last are ignored.
+    def get_request(timeout = nil)
+      return if IO.select([ @pipe ], nil, nil, timeout).nil?
+      header = @pipe.gets
+      if header =~ /^<render (\d{1,4})>\n$/
+        request = @pipe.read $1.to_i
+      end
+      get_request(0.001) || request
+    end
+
     # Listens for requests on the named pipe and hands them over to the
     # renderer. Invalid lines are ignored. A request consists of a message
     # header and the markup to render. The message header is of the form
@@ -32,15 +43,8 @@ module Rembrandt
     # http://www.slideshare.net/feyeleanor/the-ruby-guide-to-nix-plumbing-hax0r-r3dux
     def listen_and_process
       loop do
-        header = @pipe.gets
-        if header =~ /^<render (\d{1,4})>\n$/
-          request = @pipe.read $1.to_i
-          # clears the queue, we only need to render the very last frame
-          unless @renderer.queue.empty?
-            @renderer.queue.clear
-          end
-          @renderer.queue << request
-        end
+        request = get_request
+        @renderer.render(request) unless request.nil?
       end
     end
   end

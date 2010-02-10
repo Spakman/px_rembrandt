@@ -6,9 +6,14 @@ require_relative "../lib/named_pipe_listener"
 Thread.abort_on_exception = true
 
 class TestRenderer
-  attr_reader :queue
+  attr_reader :rendered, :last_rendered
   def initialize
-    @queue = Queue.new
+    @rendered = 0
+  end
+
+  def render(markup)
+    @rendered += 1
+    @last_rendered = markup
   end
 end
 
@@ -72,8 +77,8 @@ class NamedPipeListenerTest < Test::Unit::TestCase
     end
     open_pipe
     write_request_to_pipe "Hello"
-    assert_equal 1, @renderer.queue.size
-    assert_equal "Hello", @renderer.queue.pop
+    assert_equal 1, @renderer.rendered
+    assert_equal "Hello", @renderer.last_rendered
   end
 
   def test_read_multiple_requests_ignoring_junk
@@ -82,13 +87,11 @@ class NamedPipeListenerTest < Test::Unit::TestCase
       @listener.listen_and_process
     end
     open_pipe
-    write_request_to_pipe "Hello"
-    @pipe << "junk\n"
-    write_request_to_pipe "What's in the middle?"
-    @pipe << "junk\nmore junk\n\n"
-    write_request_to_pipe "Goodbye"
-    assert_equal 1, @renderer.queue.size
-    assert_equal "Goodbye", @renderer.queue.pop
+    @pipe << "<render 5>\nHellojunk\n<render 6>\nmiddle\njunk\njunk\n<render 7>\nGoodbye"
+    @pipe.flush
+    sleep 2
+    assert_equal 1, @renderer.rendered
+    assert_equal "Goodbye", @renderer.last_rendered
   end
 
   def test_only_display_last_frame_available
@@ -97,10 +100,10 @@ class NamedPipeListenerTest < Test::Unit::TestCase
       @listener.listen_and_process
     end
     open_pipe
-    write_request_to_pipe "Hello"
-    write_request_to_pipe "What's in the middle?"
-    write_request_to_pipe "Goodbye"
-    assert_equal 1, @renderer.queue.size
-    assert_equal "Goodbye", @renderer.queue.pop
+    @pipe << "<render 5>\nHello<render 6>\nmiddle<render 7>\nGoodbye"
+    @pipe.flush
+    sleep 0.2
+    assert_equal 1, @renderer.rendered
+    assert_equal "Goodbye", @renderer.last_rendered
   end
 end
