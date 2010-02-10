@@ -19,11 +19,11 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("-p", "--pipe [FILEPATH]", "Connect to this named pipe") do |pipe|
+  opts.on("-p", "--pipe [FILEPATH]", "Connect to this named pipe. Default: /tmp/rembrandt.fifo") do |pipe|
     options[:pipe] = pipe
   end
 
-  opts.on("-o", "--output [FILEPATH]", "The filepath for the outputted PNG") do |filepath|
+  opts.on("-o", "--output [FILEPATH]", "The filepath for the outputted PNG. Default: /dev/shm/lcd.png") do |filepath|
     options[:output] = filepath
   end
 
