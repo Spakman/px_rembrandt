@@ -36,6 +36,9 @@ module Rembrandt
 
     def parse_and_render(text)
       view = Nokogiri::HTML.parse text
+      view.css('image').each do |image|
+        render_image image
+      end
       view.css('button').each do |button|
         render_button_label button
       end
@@ -64,6 +67,22 @@ module Rembrandt
       parse_and_render text
       create_png
       finalise
+    end
+
+
+    # Draws a PNG.
+    #
+    # Parameters:
+    #   x (integer)         : starting x coordinate of the image in pixels. Default: 0.
+    #   y (integer)         : starting y coordinate of the image in pixels. Default: 0.
+    #
+    # TODO: refactor the halign and valign string rendering stuff to use
+    # here too.
+    def render_image(image)
+      x = image['x'].to_i || 0
+      y = image['y'].to_i || 0
+      image_to_render = GD::Image.new_from_png(image['path'])
+      image_to_render.copy(@image, x, y, 0, 0, image_to_render.width, image_to_render.height)
     end
 
     def render_list(list)

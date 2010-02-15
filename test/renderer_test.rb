@@ -205,4 +205,14 @@ class RendererTest < Test::Unit::TestCase
     @renderer.render '<text x="0" y="0" size="huge" valign="centre" halign="centre">This is big</text>'
     assert images_are_identical?(:render_huge_font_vert_horiz_centre, @image_filepath)
   end
+
+  def test_render_image
+    @renderer.render "<image path='#{File.expand_path(File.dirname(__FILE__)+'/face.png')}' />"
+    assert images_are_identical?(:render_image, @image_filepath)
+  end
+  
+  def test_render_image_with_x_y_and_text
+    @renderer.render "<image path='#{File.expand_path(File.dirname(__FILE__)+'/face.png')}' x='150' y='20' /><text>This is text</text>"
+    assert images_are_identical?(:render_image_with_x_y_and_text, @image_filepath)
+  end
 end
