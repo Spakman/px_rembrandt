@@ -215,4 +215,9 @@ class RendererTest < Test::Unit::TestCase
     @renderer.render "<image path='#{File.expand_path(File.dirname(__FILE__)+'/face.png')}' x='150' y='20' /><text>This is text</text>"
     assert images_are_identical?(:render_image_with_x_y_and_text, @image_filepath)
   end
+  
+  def test_render_image_that_doesnt_exist
+    @renderer.render "<image path='#{File.expand_path(File.dirname(__FILE__)+'/nothere.png')}' x='150' y='20' /><text>This is text</text>"
+    assert images_are_identical?(:render_image_that_doesnt_exist, @image_filepath)
+  end
 end

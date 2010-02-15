@@ -79,10 +79,12 @@ module Rembrandt
     # TODO: refactor the halign and valign string rendering stuff to use
     # here too.
     def render_image(image)
-      x = image['x'].to_i || 0
-      y = image['y'].to_i || 0
-      image_to_render = GD::Image.new_from_png(image['path'])
-      image_to_render.copy(@image, x, y, 0, 0, image_to_render.width, image_to_render.height)
+      if File.readable? image['path']
+        x = image['x'].to_i || 0
+        y = image['y'].to_i || 0
+        image_to_render = GD::Image.new_from_png(image['path'])
+        image_to_render.copy(@image, x, y, 0, 0, image_to_render.width, image_to_render.height)
+      end
     end
 
     def render_list(list)
