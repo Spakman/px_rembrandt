@@ -39,7 +39,7 @@ module Rembrandt
         if header =~ /^<render (\d{1,4})>\n$/
           request = @pipe.read $1.to_i
         end
-      end while IO.select([ @pipe ], nil, nil, 0.0001)
+      end while IO.select([ @pipe ], nil, nil, 0)
       request
     end
 
